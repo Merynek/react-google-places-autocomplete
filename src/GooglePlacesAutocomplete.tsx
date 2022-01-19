@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import AsyncSelect from 'react-select/async';
-import { OptionsType, OptionTypeBase } from 'react-select';
+import { Options } from 'react-select';
 import { useDebouncedCallback } from 'use-debounce';
 import GooglePlacesAutocompleteProps, {
   AutocompletionRequest,
@@ -8,6 +8,12 @@ import GooglePlacesAutocompleteProps, {
 } from './GooglePlacesAutocomplete.types';
 import autocompletionRequestBuilder from './helpers/autocompletionRequestBuilder';
 import { Loader } from '@googlemaps/js-api-loader';
+import AutocompletePrediction = google.maps.places.AutocompletePrediction;
+
+interface ISelectItem {
+  label: string;
+  value: AutocompletePrediction;
+}
 
 const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<GooglePlacesAutocompleteHandle, GooglePlacesAutocompleteProps> = ({
   apiKey = '',
@@ -21,7 +27,7 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<GooglePlacesAutoc
 } : GooglePlacesAutocompleteProps, ref) : React.ReactElement => {
   const [placesService, setPlacesService] = useState<google.maps.places.AutocompleteService | undefined>(undefined);
   const [sessionToken, setSessionToken] = useState<google.maps.places.AutocompleteSessionToken | undefined>(undefined);
-  const [fetchSuggestions] = useDebouncedCallback((value: string, cb: (options: OptionsType<OptionTypeBase>) => void): void => {
+  const [fetchSuggestions] = useDebouncedCallback((value: string, cb: (options: Options<ISelectItem>) => void): void => {
     if (!placesService) return cb([]);
     if (value.length < minLengthAutocomplete) return cb([]);
 
